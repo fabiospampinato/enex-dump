@@ -29,7 +29,8 @@ const Content = {
       }
 
       return beautifyHTML ( html )
-                 .replace ( /^([^\n])/, '\n$1' ); // Ensure it starts with a new line
+                 .replace ( /^\s*/, '\n' ) // Ensure it starts with a new line
+                 .replace ( /\s*$/, '\n' ); // Ensure it ends with a new line
 
     },
 
@@ -141,14 +142,15 @@ const Content = {
       service.keep ([ 'b', 'i', 's', 'u' ]); // 😚
 
       return service.turndown ( html )
-                    .replace ( /^([^\n])/, '\n$1' ) // Ensure it starts with a new line
                     .replace ( /\\((-|\*|\+) )/g, '$1' ) // Unescape unordered lists
                     .replace ( /^(-|\*|\+)\s+/gm, '$1 ' ) // Remove extra whitespace from unordered lists
                     .replace ( /^(\d+\.)\s+/gm, '$1 ' ) // Remove extra whitespace from ordered lists
                     .replace ( /\\\[(.)\\\] /g, '[$1] ' ) // Unescape checkboxes
                     .replace ( /(\s*\n\s*){4,}/g, '\n\n<br />\n\n' ) // Add line breaks
                     .replace ( /(\s*\n\s*){3,}/g, '\n\n' ) // Remove extra new lines
-                    .replace ( /\n\n<br \/>\n\n(-|\*|\+) /g, '\n\n$1 ' ); // Remove line breaks before lists
+                    .replace ( /\n\n<br \/>\n\n(-|\*|\+) /g, '\n\n$1 ' ) // Remove line breaks before lists
+                    .replace ( /^\s*/, '\n' ) // Ensure it starts with a new line
+                    .replace ( /\s*$/, '\n' ); // Ensure it ends with a new line
 
     }
 
