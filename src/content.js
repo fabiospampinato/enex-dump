@@ -14,7 +14,7 @@ const Content = {
 
   format: {
 
-    html ( html ) {
+    html ( html, title ) {
 
       html = html.replace ( /<!DOCTYPE(.*?)>/g, '' ) // Remove doctype
                  .replace ( /<\?xml(.*?)>/g, '' ) // Remove xml thing (what's it called?)
@@ -24,14 +24,18 @@ const Content = {
                  .replace ( /<div>(\s*)<\/div>/g, '' ) // Remove empty divs
                  .replace ( /(<div>(\s*)<br ?\/>(\s*)<\/div>){2,}/g, '<div><br /></div>' ); // Remove extra line breaks
 
+      if ( title ) {
+        html = `<h1>${title}</h1>${html}`;
+      }
+
       return beautifyHTML ( html )
                  .replace ( /^([^\n])/, '\n$1' ); // Ensure it starts with a new line
 
     },
 
-    async markdown ( html ) {
+    async markdown ( html, title ) {
 
-      html = Content.format.html ( html );
+      html = Content.format.html ( html, title );
 
       function reshapePlugin ( ast ) {
         return ast.map ( entry => {

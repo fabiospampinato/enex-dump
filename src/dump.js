@@ -62,7 +62,7 @@ const Dump = {
 
     return await Promise.all ( xml['en-export'].note.map ( async note => ({
       title: note.title[0],
-      content: await Parse.content ( note.content[0] ),
+      content: await Parse.content ( note.content[0], note.title[0] ),
       created: Parse.date ( note.created[0] ),
       updated: Parse.date ( note.updated[0] ),
       tags: note.tag,
@@ -95,7 +95,6 @@ const Dump = {
       if ( Config.dump.metadata ) {
 
         let metadata = {
-          title: data.title,
           tags: data.tags,
           attachments,
           created: data.created.toISOString ()
