@@ -115,7 +115,7 @@ const Content = {
             }
             /* BACKGROUND COLOR */
             const backgroundColor = style.match ( /background-color: ([^;]+);/ );
-            if ( backgroundColor ) {
+            if ( backgroundColor && backgroundColor[1] !== 'rgb(255, 255, 255)' ) {
               newStyle += backgroundColor[0];
             }
           }
