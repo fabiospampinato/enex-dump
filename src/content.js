@@ -144,6 +144,7 @@ const Content = {
       return service.turndown ( html )
                     .replace ( /\\((-|\*|\+) )/g, '$1' ) // Unescape unordered lists
                     .replace ( /^(-|\*|\+)\s+/gm, '$1 ' ) // Remove extra whitespace from unordered lists
+                    .replace ( /^((?:-|\*|\+) .*)\n\n(?=(?:-|\*|\+) )/gm, '$1\n' ) // Remove extra whitespace between unordered lists items
                     .replace ( /^(\d+\.)\s+/gm, '$1 ' ) // Remove extra whitespace from ordered lists
                     .replace ( /\\\[(.)\\\] /g, '[$1] ' ) // Unescape checkboxes
                     .replace ( /(\s*\n\s*){4,}/g, '\n\n<br />\n\n' ) // Add line breaks
