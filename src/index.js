@@ -17,7 +17,7 @@ function EnexDump ( options ) {
 
   if ( !Config.path.dst ) Utils.throw ( 'You have to pass a dst path' );
 
-	if ( !Config.dump.formats.includes ( Config.dump.format ) ) Utils.throw ( `We only support these formats: ${Config.dump.formats.map ( format => `"${format}"` ).join ( ', ' )} ` );
+  if ( !Config.dump.formats.includes ( Config.dump.format ) ) Utils.throw ( `We only support these formats: ${Config.dump.formats.map ( format => `"${format}"` ).join ( ', ' )} ` );
 
   Dump.enex ();
 
