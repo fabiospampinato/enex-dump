@@ -65,7 +65,7 @@ const Dump = {
       content: await Parse.content ( note.content[0], note.title[0] ),
       created: Parse.date ( note.created[0] ),
       updated: Parse.date ( note.updated[0] ),
-      tags: note.tag,
+      tags: note.tag || [],
       attachments: Config.dump.attachments && note.resource && note.resource.map ( resource => ({
         buffer: Buffer.from ( resource.data[0]._, resource.data[0]['$'].encoding ),
         fileName: resource['resource-attributes'][0]['file-name'][0]
@@ -95,7 +95,7 @@ const Dump = {
       if ( Config.dump.metadata ) {
 
         let metadata = {
-          tags: data.tags,
+          tags: [...data.tags, ...Config.dump.tags],
           attachments,
           created: data.created.toISOString ()
         };

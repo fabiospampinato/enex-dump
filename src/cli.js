@@ -27,6 +27,7 @@ async function CLI () {
      .option ( '--dst <path>', 'Path to the dump directory', undefined, './dump' )
      .option ( '--format <format>', 'Convert notes to this format', Config.dump.formats, 'markdown' )
      .option ( '--extension <ext>', 'Save notes using this extension', undefined, 'md' )
+     .option ( '--tag <tag>', 'Tag to add to all notes', app.REPEATABLE )
      .option ( '--no-attachments', 'Don\'t dump attachments' )
      .option ( '--no-notes', 'Don\'t dump notes' )
      .option ( '--no-metadata', 'Don\'t add metatada to notes' )

@@ -16,6 +16,7 @@ const Config = {
     attachments: argv.hasOwnProperty ( 'attachments' ) ? argv.attachments : true,
     notes: argv.hasOwnProperty ( 'notes' ) ? argv.notes : true,
     metadata: argv.hasOwnProperty ( 'metadata' ) ? argv.metadata : true,
+    tags: argv.hasOwnProperty ( 'tag' ) ? _.castArray ( argv.tag ) : [],
     formats: ['html', 'markdown'],
     format: argv.format || 'markdown',
     extension: argv.extension || 'md'
