@@ -4,7 +4,6 @@
 const _ = require ( 'lodash' ),
       matter = require ( 'gray-matter' ),
       {html: beautifyHTML} = require ( 'js-beautify' ),
-      reshape = require ( 'reshape' ),
       turndown = require ( 'turndown' ),
       Matter = require ( './matter' );
 
@@ -38,23 +37,6 @@ const Content = {
 
       html = Content.format.html ( html, title );
 
-      function reshapePlugin ( ast ) {
-        return ast.map ( entry => {
-          /* CODE */
-          if ( entry.type === 'tag' && entry.attrs && entry.attrs.style && entry.attrs.style[0].content.includes ( '-en-codeblock' ) ) {
-            entry.name = 'span';
-            entry.attrs.style[0].content = '-en-codeblock';
-          }
-          /* ALIGNMENT */
-          if ( entry.type === 'tag' && entry.attrs && entry.attrs.style && entry.attrs.style[0].content.includes ( 'text-align' ) ) {
-            entry.name = 'span';
-          }
-          return entry;
-        })
-      }
-
-      html = ( await reshape ({ plugins: reshapePlugin }).process ( html ) ).output ();
-
       html = html.replace ( /<input(.*?)type="checkbox"([^>]*?)checked(.*?)>/g, ' [x] ' ) // Replace checked checkbox
                  .replace ( /<input(.*?)type="checkbox"(.*?)>/g, ' [ ] ' ); // Replace unchecked checkbox
 
@@ -64,7 +46,29 @@ const Content = {
         hr: '---'
       });
 
-      service.addRule ( 'formatting', {
+      service.addRule ( 'alignment', {
+        filter: node => node.nodeName !== 'TABLE' && ( node.getAttribute ( 'style' ) || '' ).includes ( 'text-align' ),
+        replacement: ( str, ele ) => {
+          str = str.trim ();
+          if ( !str.length ) return '';
+          const style = ele.getAttribute ( 'style' );
+          const alignment = style.match ( /text-align: (\S+);/ );
+          return `<p align="${alignment[1]}">${_.trim ( str )}</p>\n\n`;
+        }
+      });
+
+      service.addRule ( 'code', {
+        filter: node => node.nodeName === 'DIV' && ( node.getAttribute ( 'style' ) || '' ).includes ( '-en-codeblock' ),
+        replacement: str => {
+          str = str.trim ();
+          if ( !str.length ) return '';
+          str = _.trim ( str ).replace ( /<(?:.|\n)*?>/gm, '' );
+          str = str.includes ( '\n' ) ? `\n\n\`\`\`\n${str}\n\`\`\`\n` : `\`${str}\``;
+          return str;
+        }
+      });
+
+      service.addRule ( 'others', {
         filter: ['font', 'span'],
         replacement: ( str, ele ) => {
           if ( !_.trim ( str ) ) return '';
@@ -72,11 +76,6 @@ const Content = {
           const style = ele.getAttribute ( 'style' );
           let newStyle = '';
           if ( style ) {
-            /* ALIGNENT */
-            const alignment = style.match ( /text-align: (\S+);/ );
-            if ( alignment && !str.match ( /<table/ ) ) {
-              str = `<p align="${alignment[1]}">${_.trim ( str )}</p>\n\n`;
-            }
             /* FORMATTING */
             if ( style.match ( /text-decoration: underline/ ) ) { // Underline
               str = `<u>${str}</u>`;
@@ -107,11 +106,6 @@ const Content = {
               if ( style.match ( /font-size: (9|10|11)px/ ) ) { // Very Small
                 str = `<small><small>${str}</small></small>`;
               }
-            }
-            /* CODE */
-            if ( style.match ( /-en-codeblock/ ) ) { // Code block
-              str = _.trim ( str ).replace ( /<(?:.|\n)*?>/gm, '' );
-              str = str.includes ( '\n' ) ? `\n\n\`\`\`\n${str}\n\`\`\`\n` : `\`${str}\``;
             }
             /* BACKGROUND COLOR */
             const backgroundColor = style.match ( /background-color: ([^;]+);/ );
