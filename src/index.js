@@ -18,7 +18,7 @@ function EnexDump ( options ) {
 
   if ( !Config.dump.formats.includes ( Config.dump.format ) ) Utils.throw ( `We only support these formats: ${Config.dump.formats.map ( format => `"${format}"` ).join ( ', ' )} ` );
 
-  Dump.enex ();
+  return Dump.enex ();
 
 }
 

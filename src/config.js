@@ -20,6 +20,16 @@ const Config = {
     formats: ['html', 'markdown'],
     format: argv.format || 'markdown',
     extension: argv.extension || 'md'
+  },
+  attachments: {
+    get path () {
+      return path.join ( Config.path.dst, 'attachments' );
+    }
+  },
+  notes: {
+    get path () {
+      return path.join ( Config.path.dst, 'notes' );
+    }
   }
 };
 

@@ -1,11 +1,10 @@
 
 /* IMPORT */
 
-const fs = require ( 'fs' ),
-      {parseString: parseXMLString} = require ( 'xml2js' ),
-      pify = require ( 'pify' ),
+const {parse: xml2js} = require ( 'fast-xml-parser' ),
       Config = require ( './config' ),
-      Content = require ( './content' );
+      Content = require ( './content' ),
+      File = require ( './file' );
 
 /* PARSE */
 
@@ -32,17 +31,13 @@ const Parse = {
 
   },
 
-  async xml ( source ) { // From XML string or file path
+  async xml ( filePath ) {
+
+    const content = await File.read ( filePath );
 
     try {
 
-      source = fs.readFileSync ( source, { encoding: 'utf8' } );
-
-    } catch ( e ) {}
-
-    try {
-
-      return await pify ( parseXMLString )( source );
+      return xml2js ( content );
 
     } catch ( e ) {}
 

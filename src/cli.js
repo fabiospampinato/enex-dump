@@ -1,8 +1,7 @@
 
 /* IMPORT */
 
-const _ = require ( 'lodash' ),
-      caporal = require ( 'caporal' ),
+const caporal = require ( 'caporal' ),
       chalk = require ( 'chalk' ),
       readPkg = require ( 'read-pkg-up' ),
       updateNotifier = require ( 'update-notifier' ),
@@ -31,13 +30,7 @@ async function CLI () {
      .option ( '--no-attachments', 'Don\'t dump attachments' )
      .option ( '--no-notes', 'Don\'t dump notes' )
      .option ( '--no-metadata', 'Don\'t add metatada to notes' )
-     .action ( () => {
-
-       updateNotifier ({ pkg }).notify ();
-
-       EnexDump ();
-
-     });
+     .action ( () => EnexDump () );
 
   /* HELP */
 

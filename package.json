@@ -27,6 +27,7 @@
   "dependencies": {
     "caporal": "git://github.com/fabiospampinato/Caporal.js#cf0f5eeefb2e04cc07798bf4a45d6bda5e2a2f63",
     "chalk": "^2.4.1",
+    "fast-xml-parser": "^3.12.10",
     "gray-matter": "^4.0.1",
     "js-beautify": "^1.7.5",
     "js-yaml": "^3.12.0",
@@ -36,8 +37,7 @@
     "pify": "^3.0.0",
     "read-pkg-up": "^4.0.0",
     "turndown": "^4.0.2",
-    "update-notifier": "^2.5.0",
-    "xml2js": "^0.4.19"
+    "update-notifier": "^2.5.0"
   },
   "engines": {
     "node": ">= 7.6.0"

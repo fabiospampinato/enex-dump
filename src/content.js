@@ -13,7 +13,7 @@ const Content = {
 
   format: {
 
-    html ( html, title ) {
+    html ( html, title, beautify = true ) {
 
       html = html.replace ( /<!DOCTYPE(.*?)>/g, '' ) // Remove doctype
                  .replace ( /<\?xml(.*?)>/g, '' ) // Remove xml thing (what's it called?)
@@ -27,15 +27,18 @@ const Content = {
         html = `<h1>${title}</h1>${html}`;
       }
 
-      return beautifyHTML ( html )
-                 .replace ( /^\s*/, '\n' ) // Ensure it starts with a new line
+      if ( beautify ) {
+        html = beautifyHTML ( html );
+      }
+
+      return html.replace ( /^\s*/, '\n' ) // Ensure it starts with a new line
                  .replace ( /\s*$/, '\n' ); // Ensure it ends with a new line
 
     },
 
     async markdown ( html, title ) {
 
-      html = Content.format.html ( html, title );
+      html = Content.format.html ( html, title, false );
 
       html = html.replace ( /<input(.*?)type="checkbox"([^>]*?)checked(.*?)>/g, ' [x] ' ) // Replace checked checkbox
                  .replace ( /<input(.*?)type="checkbox"(.*?)>/g, ' [ ] ' ); // Replace unchecked checkbox

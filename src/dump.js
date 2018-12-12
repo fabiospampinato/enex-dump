@@ -2,73 +2,30 @@
 /* IMPORT */
 
 const _ = require ( 'lodash' ),
-      fs = require ( 'fs' ),
-      mkdirp = require ( 'mkdirp' ),
-      path = require ( 'path' ),
       Config = require ( './config' ),
       Content = require ( './content' ),
+      File = require ( './file' ),
       Parse = require ( './parse' ),
+      Path = require ( './path' ),
       Utils = require ( './utils' );
 
 /* DUMP */
 
 const Dump = {
 
-  _getAllowedPath ( folderPath, baseName ) {
-
-    baseName = baseName.replace ( /\//g, '∕' ); // Preserving a dash-like character
-
-    const {name, ext} = path.parse ( baseName );
-
-    for ( let i = 1;; i++ ) {
-
-      const suffix = i > 1 ? ` (${i})` : '',
-            fileName = `${name}${suffix}${ext}`,
-            filePath = path.join ( folderPath, fileName );
-
-      try {
-
-        fs.accessSync ( filePath );
-
-      } catch ( e ) {
-
-        return { folderPath, filePath, fileName };
-
-      }
-
-    }
-
-  },
-
-  _getAllowedAttachmentPath ( attachment ) {
-
-    const folderPath = path.join ( Config.path.dst, 'attachments' );
-
-    return Dump._getAllowedPath ( folderPath, attachment.fileName );
-
-  },
-
-  _getAllowedNotePath ( note ) {
-
-    const folderPath = path.join ( Config.path.dst, 'notes' );
-
-    return Dump._getAllowedPath ( folderPath, `${note.title}.${Config.dump.extension}` );
-
-  },
-
   async _xml2data ( xml ) {
 
     if ( !xml ) return [];
 
-    return await Promise.all ( xml['en-export'].note.map ( async note => ({
-      title: note.title[0],
-      content: await Parse.content ( note.content[0], note.title[0] ),
-      created: Parse.date ( note.created[0] ),
-      updated: Parse.date ( note.updated[0] ),
-      tags: note.tag || [],
-      attachments: Config.dump.attachments && note.resource && note.resource.map ( resource => ({
-        buffer: Buffer.from ( resource.data[0]._, resource.data[0]['$'].encoding ),
-        fileName: resource['resource-attributes'][0]['file-name'][0]
+    return await Promise.all ( _.castArray ( xml['en-export'].note ).map ( async note => ({
+      title: note.title,
+      content: await Parse.content ( note.content, note.title ),
+      created: Parse.date ( note.created ),
+      updated: Parse.date ( note.updated ),
+      tags: _.castArray ( note.tag || [] ),
+      attachments: Config.dump.attachments && note.resource && _.castArray ( note.resource ).filter ( resource => resource.data ).map ( resource => ({
+        buffer: Buffer.from ( resource.data, 'base64' ),
+        fileName: resource['resource-attributes']['file-name']
       }))
     })));
 
@@ -82,65 +39,61 @@ const Dump = {
 
     if ( !data.length ) Utils.throw ( 'Nothing to dump, is the path correct?' );
 
-    Dump.data ( data );
+    await Dump.data ( data );
 
   },
 
-  data ( data ) {
+  async data ( data ) {
 
-    data.forEach ( data => {
+    return await Promise.all ( data.map ( async datum => {
 
-      const attachments = Config.dump.attachments ? Dump.attachments ( data.attachments ) : [];
+      const attachments = Config.dump.attachments ? await Dump.attachments ( datum.attachments ) : [];
 
       if ( Config.dump.metadata ) {
 
         let metadata = {
-          tags: [...data.tags, ...Config.dump.tags],
+          tags: [...datum.tags, ...Config.dump.tags],
           attachments,
-          created: data.created.toISOString ()
+          created: datum.created.toISOString ()
         };
 
         metadata = _.pickBy ( metadata, _.negate ( _.isEmpty ) );
 
-        data.content = Content.metadata.set ( data.content, metadata );
+        datum.content = Content.metadata.set ( datum.content, metadata );
 
       }
 
       if ( Config.dump.notes ) {
 
-        Dump.note ( data );
+        await Dump.note ( datum );
 
       }
 
-    });
+    }));
 
   },
 
-  attachments ( attachments ) {
+  async attachments ( attachments ) {
 
     if ( !attachments ) return [];
 
-    return attachments.map ( attachment => {
+    return await Promise.all ( attachments.map ( async attachment => {
 
-      const {folderPath, filePath, fileName} = Dump._getAllowedAttachmentPath ( attachment );
+      const {filePath, fileName} = await Path.getAllowedPath ( Config.attachments.path, attachment.fileName );
 
-      mkdirp.sync ( folderPath );
-
-      fs.writeFileSync ( filePath, attachment.buffer );
+      await File.write ( filePath, attachment.buffer );
 
       return fileName;
 
-    });
+    }));
 
   },
 
-  note ( note ) {
+  async note ( note ) {
 
-    const {folderPath, filePath, fileName} = Dump._getAllowedNotePath ( note );
+    const {filePath, fileName} = await Path.getAllowedPath ( Config.notes.path, `${note.title}.${Config.dump.extension}` );
 
-    mkdirp.sync ( folderPath );
-
-    fs.writeFileSync ( filePath, note.content );
+    await File.write ( filePath, note.content );
 
     return fileName;
 
