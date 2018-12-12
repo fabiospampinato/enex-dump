@@ -47,12 +47,12 @@ const Content = {
       });
 
       service.addRule ( 'alignment', {
-        filter: node => node.nodeName !== 'TABLE' && ( node.getAttribute ( 'style' ) || '' ).includes ( 'text-align' ),
+        filter: node => node.nodeName !== 'TABLE' && ( node.getAttribute ( 'style' ) || '' ).includes ( 'text-align:' ),
         replacement: ( str, ele ) => {
           str = str.trim ();
           if ( !str.length ) return '';
           const style = ele.getAttribute ( 'style' );
-          const alignment = style.match ( /text-align: (\S+);/ );
+          const alignment = style.match ( /text-align:\s*(\S+);/ );
           return `<p align="${alignment[1]}">${_.trim ( str )}</p>\n\n`;
         }
       });
