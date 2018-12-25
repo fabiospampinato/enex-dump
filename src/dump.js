@@ -25,7 +25,7 @@ const Dump = {
       tags: _.castArray ( note.tag || [] ),
       attachments: Config.dump.attachments && note.resource && _.castArray ( note.resource ).filter ( resource => resource.data ).map ( resource => ({
         buffer: Buffer.from ( resource.data, 'base64' ),
-        fileName: resource['resource-attributes']['file-name']
+        fileName: resource['resource-attributes']['file-name'] || 'Untitled'
       }))
     })));
 
