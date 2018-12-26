@@ -118,12 +118,12 @@ const Content = {
           }
           /* COLOR */
           const colorAttr = ele.getAttribute ( 'color' ); // Color
-          if ( colorAttr ) {
+          if ( colorAttr && colorAttr !== '#010101' ) {
             newStyle += `color: ${colorAttr};`
           }
           if ( style ) {
             const colorStyle = style.match ( /[^-]color: ([^;]+);/ );
-            if ( colorStyle ) {
+            if ( colorStyle && colorStyle[1] !== '#010101' ) {
               newStyle += `color: ${colorStyle[1]};`;
             }
           }
