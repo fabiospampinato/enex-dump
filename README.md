@@ -22,9 +22,9 @@ This app can export notes in html or Markdown. Run the following to read all abo
 enex-dump --help
 ```
 
-## Why?
+## Related
 
-I've finally decided to build my own Evernote replacement, no WYSIWYG, no proprietary formats, no bloat, just Markdown + tags + syncing via dropbox/gdrive/whatever -- this app is the first step towards that.
+- **[Notable](https://github.com/fabiospampinato/notable)**: The markdown-based note-taking app that doesn't suck.
 
 ## License
 
