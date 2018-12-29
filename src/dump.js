@@ -20,8 +20,8 @@ const Dump = {
     return await Promise.all ( _.castArray ( xml['en-export'].note ).map ( async note => ({
       title: note.title,
       content: await Parse.content ( note.content, note.title ),
-      created: Parse.date ( note.created ),
-      updated: Parse.date ( note.updated ),
+      created: ( note.created ) ? Parse.date ( note.created ) : new Date(),
+      updated: ( note.updated ) ? Parse.date ( note.updated ) : new Date(),
       tags: _.castArray ( note.tag || [] ),
       attachments: Config.dump.attachments && note.resource && _.castArray ( note.resource ).filter ( resource => resource.data ).map ( resource => ({
         buffer: Buffer.from ( resource.data, 'base64' ),
