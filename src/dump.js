@@ -18,14 +18,14 @@ const Dump = {
     if ( !xml ) return [];
 
     return await Promise.all ( _.castArray ( xml['en-export'].note ).map ( async note => ({
-      title: note.title,
-      content: await Parse.content ( note.content, note.title ),
+      title: note.title || 'Untitled',
+      content: await Parse.content ( note.content || '', note.title || 'Untitled' ),
       created: note.created ? Parse.date ( note.created ) : new Date (),
       updated: note.updated ? Parse.date ( note.updated ) : new Date (),
       tags: _.castArray ( note.tag || [] ),
       attachments: Config.dump.attachments && note.resource && _.castArray ( note.resource ).filter ( resource => resource.data ).map ( resource => ({
         buffer: Buffer.from ( resource.data, 'base64' ),
-        fileName: resource['resource-attributes']['file-name'] || 'Untitled'
+        fileName: _.get ( resource, ['resource-attributes', 'file-name'] ) || 'Untitled'
       }))
     })));
 
