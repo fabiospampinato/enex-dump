@@ -56,6 +56,7 @@ const Content = {
           if ( !str.length ) return '';
           const style = ele.getAttribute ( 'style' );
           const alignment = style.match ( /text-align:\s*(\S+);/ );
+          if ( !alignment ) return `${_.trim ( str )}\n\n`; //TODO: The regex isn't good enough if we reach here
           return `<p align="${alignment[1]}">${_.trim ( str )}</p>\n\n`;
         }
       });
