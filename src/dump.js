@@ -17,17 +17,21 @@ const Dump = {
 
     if ( !xml ) return [];
 
-    return await Promise.all ( _.castArray ( xml['en-export'].note ).map ( async note => ({
-      title: note.title || 'Untitled',
-      content: await Parse.content ( note.content || '', note.title || 'Untitled' ),
-      created: note.created ? Parse.date ( note.created ) : new Date (),
-      updated: note.updated ? Parse.date ( note.updated ) : new Date (),
-      tags: _.castArray ( note.tag || [] ),
-      attachments: Config.dump.attachments && note.resource && _.castArray ( note.resource ).filter ( resource => resource.data ).map ( resource => ({
-        buffer: Buffer.from ( resource.data, 'base64' ),
-        fileName: _.get ( resource, ['resource-attributes', 'file-name'] ) || 'Untitled'
-      }))
-    })));
+    return await Promise.all ( _.castArray ( xml['en-export'].note ).map ( async note => {
+      const title = Parse.title ( note.title || 'Untitled' );
+      const created = note.created ? Parse.date ( note.created ) : new Date ();
+      return {
+        title,
+        content: await Parse.content ( note.content || '', note.title || 'Untitled' ),
+        created,
+        updated: note.updated ? Parse.date ( note.updated ) : created,
+        tags: _.castArray ( note.tag || [] ),
+        attachments: Config.dump.attachments && note.resource && _.castArray ( note.resource ).filter ( resource => resource.data ).map ( resource => ({
+          buffer: Buffer.from ( resource.data, 'base64' ),
+          fileName: _.get ( resource, ['resource-attributes', 'file-name'] ) || 'Untitled'
+        }))
+      };
+    }));
 
   },
 
@@ -52,9 +56,11 @@ const Dump = {
       if ( Config.dump.metadata ) {
 
         let metadata = {
+          title: datum.title,
           tags: [...datum.tags, ...Config.dump.tags],
           attachments,
-          created: datum.created.toISOString ()
+          created: datum.created.toISOString (),
+          modified: datum.updated.toISOString ()
         };
 
         metadata = _.pickBy ( metadata, _.negate ( _.isEmpty ) );

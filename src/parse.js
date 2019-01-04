@@ -2,6 +2,7 @@
 /* IMPORT */
 
 const {parse: xml2js} = require ( 'fast-xml-parser' ),
+      entities = require('html-entities').AllHtmlEntities,
       Config = require ( './config' ),
       Content = require ( './content' ),
       File = require ( './file' );
@@ -22,6 +23,12 @@ const Parse = {
     date = date.join ( '' );
 
     return new Date ( date );
+
+  },
+
+  title ( title ) {
+
+    return entities.decode( title );
 
   },
 
