@@ -1,6 +1,6 @@
 # enex-dump
 
-Dump the content of `.enex` files, including attachements, some metadata and optionally converting notes to Markdown.
+Dump the content of `.enex` files, including attachments, some metadata and optionally converting notes to Markdown.
 
 `enex` is the format used by [Evernote](https://evernote.com) for exporting notes.
 
