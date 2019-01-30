@@ -4,7 +4,7 @@
 const _ = require ( 'lodash' ),
       matter = require ( 'gray-matter' ),
       {html: beautifyHTML} = require ( 'js-beautify' ),
-      turndown = require ( 'turndown' ),
+      turndown = require ( './_turndown' ),
       Matter = require ( './matter' );
 
 /* CONTENT */
