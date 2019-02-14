@@ -26,7 +26,9 @@ const Path = {
 
   async getAllowedPath ( folderPath, baseName ) {
 
-    baseName = baseName.replace ( /\//g, '∕' ); // Preserving a dash-like character
+    baseName = baseName
+                  .replace ( /\//g, '∕' ) // Preserving a dash-like character
+                  .replace ( ':', '.'); // Colons are reserved in some filesystems.
 
     const {name, ext} = path.parse ( baseName );
 
