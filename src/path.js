@@ -4,6 +4,8 @@
 const path = require ( 'path' ),
       File = require ( './file' );
 
+const INVALID_FILENAME_CHARS = /[^\w\d_ .∕()-]/g;
+
 /* PATH */
 
 const Path = {
@@ -28,7 +30,7 @@ const Path = {
 
     baseName = baseName
                   .replace ( /\//g, '∕' ) // Preserving a dash-like character
-                  .replace ( ':', '.'); // Colons are reserved in some filesystems.
+                  .replace ( INVALID_FILENAME_CHARS, '-'); // Colons are reserved in some filesystems.
 
     const {name, ext} = path.parse ( baseName );
 
