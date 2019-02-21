@@ -28,6 +28,7 @@
     "caporal": "git://github.com/fabiospampinato/Caporal.js#optional-tabtab",
     "chalk": "^2.4.1",
     "fast-xml-parser": "^3.12.10",
+    "filenamify": "^2.1.0",
     "gray-matter": "^4.0.1",
     "html-entities": "^1.2.1",
     "js-beautify": "^1.7.5",

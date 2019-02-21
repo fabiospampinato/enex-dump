@@ -2,9 +2,8 @@
 /* IMPORT */
 
 const path = require ( 'path' ),
+      filenamify = require ( 'filenamify' ),
       File = require ( './file' );
-
-const INVALID_FILENAME_CHARS = /[^\w\d_ .∕()-]/g;
 
 /* PATH */
 
@@ -29,10 +28,11 @@ const Path = {
   async getAllowedPath ( folderPath, baseName ) {
 
     baseName = baseName
-                  .replace ( /\//g, '∕' ) // Preserving a dash-like character
-                  .replace ( INVALID_FILENAME_CHARS, '-'); // Colons are reserved in some filesystems.
+                  .replace ( /\//g, '∕' ); // Preserving a dash-like character
 
-    const {name, ext} = path.parse ( baseName );
+    let {name, ext} = path.parse ( baseName );
+
+    name = Path.sanitize ( name );
 
     for ( let i = 1;; i++ ) {
 
@@ -48,6 +48,12 @@ const Path = {
 
     }
 
+  },
+
+  sanitize ( filePath ) {
+    return filenamify ( filePath, { replacement: ' ' } )
+             .replace ( /#/g, ' ' )
+             .trim ();
   }
 
 };
