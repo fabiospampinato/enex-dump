@@ -1,3 +1,5 @@
+> Warning: This library is now deprecated, use [Dumper](https://github.com/notable/dumper) instead.
+
 # enex-dump
 
 Dump the content of `.enex` files, including attachments, some metadata and optionally converting notes to Markdown.
